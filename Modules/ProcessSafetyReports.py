@@ -6,16 +6,13 @@ def process_safety_reports(list, damper=False):
 		if is_report_safe(report):
 			count += 1
 		elif (damper):
-			report_copy1 = report.copy()
-			del report_copy1[scan_report(report_copy1).index(False)]
-			if is_report_safe(report_copy1):
-				count += 1
-				continue
+			badInd = get_first_bad_element(report)
 
-			report_copy2 = report.copy()
-			del report_copy2[scan_report(report_copy2).index(False) + 1]
-			if is_report_safe(report_copy2):
+			if is_report_safe(report[0:badInd-1]+report[badInd:]):
+				count += 1
+			elif is_report_safe(report[0:badInd]+report[badInd+1:]):
 				count+=1
+
 	return count
 
 def is_report_safe(report):
@@ -29,10 +26,21 @@ def is_report_safe(report):
 			return False
 	return True
 
+def get_first_bad_element(report):
+	report_summary = list()
+	isAsc = numpy.sign(report[0] - next(i for i in report if i != report[0]))
+
+	for i in range(1, len(report)):
+		diff = report[i - 1] - report[i]
+		if (numpy.sign(diff) != isAsc) or abs(diff) > 3:
+			return i
+
+	return numpy.nan
+
 # Scan a report and return which elements failed
 def scan_report(report):
 	report_summary = list()
-	isAsc = numpy.sign(report[0] - report[len(report) - 1])
+	isAsc = numpy.sign(report[0] - next(i for i in report if i != report[0]))
 
 	for i in range(1, len(report)):
 		diff = report[i - 1] - report[i]
