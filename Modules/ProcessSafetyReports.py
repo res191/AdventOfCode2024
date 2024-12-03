@@ -50,9 +50,3 @@ def scan_report(report):
 		else:
 			report_summary.append(True)
 	return report_summary
-
-def compute_value(list):
-	sum = 0
-	for numbers in list:
-		sum+=int(numbers[0])*int(numbers[1])
-	return sum
