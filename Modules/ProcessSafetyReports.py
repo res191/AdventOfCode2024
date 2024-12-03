@@ -1,4 +1,5 @@
 import numpy
+import re
 
 def process_safety_reports(list, damper=False):
 	count = 0
@@ -49,3 +50,12 @@ def scan_report(report):
 		else:
 			report_summary.append(True)
 	return report_summary
+
+def compute_value(list):
+	sum = 0
+	for item in list:
+		numbers = re.findall('\d{1,3}', item)
+		if (len(numbers) != 2):
+			print('Error processing',  item)
+		sum+=int(numbers[0])*int(numbers[1])
+	return sum
