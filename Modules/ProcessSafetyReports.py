@@ -53,9 +53,6 @@ def scan_report(report):
 
 def compute_value(list):
 	sum = 0
-	for item in list:
-		numbers = re.findall('\d{1,3}', item)
-		if (len(numbers) != 2):
-			print('Error processing',  item)
+	for numbers in list:
 		sum+=int(numbers[0])*int(numbers[1])
 	return sum
