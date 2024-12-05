@@ -13,6 +13,8 @@ def read_lines_as_list(txtfile):
   input_list = [list(map(int, line.split())) for line in f.readlines()]
   return input_list
 
+
+
 def read_file_as_string(txtfile):
   return "".join(open(txtfile,"r").read().splitlines())
 
@@ -27,11 +29,11 @@ def read_lines_special_parse(txtfile):
   return  special_parse_line(read_file_as_string(txtfile))
 
 def read_lines_special_parse_excludes(txtfile):
-  all_list = re.split('do\(\)', read_file_as_string(txtfile))
+  all_list = re.split('do\\(\\)', read_file_as_string(txtfile))
 
   input_list = list()
   for item in all_list:
-    good_item = re.split('don\'t\(\)', item, maxsplit=1)
+    good_item = re.split("don\\'t\\(\\)", item, maxsplit=1)
     input_list = input_list + special_parse_line(good_item[0])
 
   return input_list
