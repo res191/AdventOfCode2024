@@ -1,15 +1,15 @@
 import numpy
 
 # return true if you get to the end of the file and have not swapped anything
-def swap_incorrect_match(input_line, rulebook):
-    for i in range(len(input_line)-1, 0, -1):
+def swap_incorrect_match(input_line, rulebook, startInd):
+    for i in range(startInd, 0, -1):
         rules_to_check = rulebook[rulebook[:,0]==input_line[i],1]
         for j in range(0, i):
             if numpy.any(rules_to_check==input_line[j]):
                 # swap the two elements
                 input_line[i], input_line[j] = input_line[j], input_line[i]
-                return False
-    return True
+                return i
+    return 0
 
 def validate_line(input_line, rulebook):
     for i in range(len(input_line)-1, 0, -1):
@@ -30,11 +30,11 @@ def generate_puzzle_two(input_list, rulebook):
     count = 0
     for input in input_list:
         input_arr = numpy.array(input)
-        swaps = not swap_incorrect_match(input_arr, rulebook)
+        swap_ind = swap_incorrect_match(input_arr, rulebook, len(input_arr) - 1)
 
-        while (not swap_incorrect_match(input_arr, rulebook)):
+        while (swap_incorrect_match(input_arr, rulebook, swap_ind) != 0):
             pass
 
-        if swaps:
+        if swap_ind > 0:
             count += input_arr[(len(input) - 1) // 2]
     return count
