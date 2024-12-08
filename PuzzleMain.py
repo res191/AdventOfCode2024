@@ -1,10 +1,9 @@
 
 import sys
-from Modules.PuzzleDay3 import PuzzleDay3
-
+from Modules.PuzzleDay4 import PuzzleDay4
 
 def main (argv):
-    puzzle = PuzzleDay3(argv[0])
+    puzzle = PuzzleDay4(argv[0])
     puzzle.solve()
 
 if __name__ == '__main__':
