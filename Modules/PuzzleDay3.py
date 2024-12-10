@@ -1,5 +1,6 @@
 import re
 from Modules.GenericPuzzle import Puzzle
+from Modules.ReadFiles import read_file_as_string
 
 """ Compute the sum of the multiplication of each row in the a Nx2 list of integers.
 """
@@ -20,7 +21,7 @@ class PuzzleDay3(Puzzle):
     """ Read the entire file as a single string
     """
     def read_file(self):
-        self.input = "".join(open(self.filename,"r").read().splitlines())
+        self.input = "".join(read_file_as_string((self.filename)))
 
     def part1(self):
         return compute_value(parse_line(self.input))

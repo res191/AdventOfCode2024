@@ -7,3 +7,4 @@ def read_file_as_int_list(txtfile):
 
 def read_file_as_string(txtfile):
   return "".join(open(txtfile,"r").read().splitlines())
+
