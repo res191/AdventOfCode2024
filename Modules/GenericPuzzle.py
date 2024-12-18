@@ -1,5 +1,11 @@
 import time
+import numpy
 
+''' The most generic puzzle class. It requires derived classes to implmenent 
+-read_file to set self.input appropriately
+-part1 to solve part1 of the puzzle and return the correct value
+-part2 to sove part2 of the puzzle and return the correct value
+-implements solve function with a time to display the puzzle answer and time take on compute'''
 class Puzzle:
     # the puzzle takes as input a filename
     def __init__(self, filename):
@@ -30,3 +36,22 @@ class Puzzle:
         print('Solution to part 2 is: ',  self.part2())
         end_part2 = time.time()
         print('Taking ', end_part2 - start_part2)
+
+''' A puzzle for help with navigating maps. 
+-It hard codes direction definitions
+-Implements a check for finding the starting location for a given character in a map assuming the map 
+is a numpy array. '''
+class MapPuzzle(Puzzle):
+
+    UP    = [-1, 0]
+    DOWN  = [1, 0]
+    LEFT  = [0, -1]
+    RIGHT = [0, 1]
+
+    DIRECTIONS=[UP, DOWN, LEFT, RIGHT]
+
+    def find_start(self, map, char):
+        pos = numpy.where(map == char)
+        if len(pos[0])> 1 or len(pos[1]) > 1:
+            print("Multiple starting positions detected this should never happen!")
+        return [pos[0][0], pos[0][1]]
