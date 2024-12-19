@@ -9,6 +9,7 @@ class register:
         self.b = b
         self.c = c
         self.print = None
+
     def combo(self, operand):
         if operand == 4:
             return self.a
@@ -115,5 +116,35 @@ class PuzzleDay17(Puzzle):
 
         print(self.register.print)
 
+    def register_solver(self, possible_min_value):
+        # we always must scan 0-7 because we dont know which will give us the correct string but we must always try
+        # the lowest value first
+        for i in range(possible_min_value, possible_min_value + 8):
+            # reset our register
+            self.register.a = i
+            self.register.b = 0
+            self.register.c = 0
+            self.register.print = None
+
+            # rerun our register
+            self.part1()
+
+            # if we match exactly game over -- return our value
+            if self.register.print == self.input:
+                return i
+
+            # otherwise we are still trying to find a partial match with the input
+            if self.input.endswith(self.register.print):
+                # if we have a partial match test if it has a solution
+                value  = self.register_solver(i * 8)
+                # if we return anything other than 0 we have found a match!
+                if value != 0:
+                    return value
+
+        # if we have explored all our options without finding a match, return 0 so we know to continue looking
+        return 0
+
     def part2(self):
-        pass
+        # to reverse engineer this the second to last instruction is to divide A by 8
+        # we can predict the last element by finding which number 0-7 matches our input
+        return self.register_solver(0)
