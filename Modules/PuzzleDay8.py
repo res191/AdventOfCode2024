@@ -1,10 +1,12 @@
 import numpy
 
+from Modules.GenericPuzzle import Puzzle
+from Modules.ReadFiles import read_file_as_char_map
+
 # only return coordinates that are in bounds of the map
 def filter_coordinates(row_inds, col_inds, map_size):
     good_elems = (row_inds >= 0) & (col_inds >= 0) & (row_inds < map_size[0]) & (col_inds < map_size[1])
     return row_inds[good_elems], col_inds[good_elems]
-
 
 def place_antinodes(input_map):
     antenna_keys = numpy.unique(input_map)
@@ -37,8 +39,6 @@ def place_antinodes(input_map):
 
     good_rows, good_cols = filter_coordinates(all_rows, all_cols, input_map.shape)
     input_map[good_rows.astype(int), good_cols.astype(int)] ='#'
-
-    return  numpy.count_nonzero(input_map =='#')
 
 # compute all the good positions for antinode based on the
 # starting antenna position, the antinode_step and the map_size
@@ -75,4 +75,22 @@ def place_harmonic_antinodes(input_array):
                 all_good_pos = numpy.append(all_good_pos,
                                             compute_harmonics(antenna_locations[:,i:i+1], offset[:,j:j+1], input_array.shape), axis =1)
     input_array[all_good_pos[0].astype(int), all_good_pos[1].astype(int)] ='#'
-    return  numpy.count_nonzero(input_array =='#')
+
+class PuzzleDay8(Puzzle):
+    def __init__(self, filename):
+        super().__init__(filename)
+
+    def read_file(self):
+        self.input = read_file_as_char_map(self.filename)
+
+    def part1(self):
+        input_map = numpy.array(self.input)
+        place_antinodes(input_map)
+
+        return numpy.count_nonzero(input_map =='#')
+
+    def part2(self):
+        input_map = numpy.array(self.input)
+        place_harmonic_antinodes(input_map)
+
+        return numpy.count_nonzero(input_map == '#')
