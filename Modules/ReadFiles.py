@@ -13,3 +13,10 @@ def read_file_as_list(txtfile):
   input_list = [line.rstrip() for line in f.readlines()]
   f.close()
   return input_list
+
+''' Here a map is a 2D list where each item describes on position.'''
+def read_file_as_char_map(txtfile):
+  f = open(txtfile, "r")
+  input_map = [list(line.rstrip()) for line in f.readlines()]
+  f.close()
+  return input_map
