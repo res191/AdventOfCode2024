@@ -2,7 +2,6 @@
 import numpy
 import re
 import matplotlib.pyplot as plt
-import time
 
 from Modules.GenericPuzzle import Puzzle
 

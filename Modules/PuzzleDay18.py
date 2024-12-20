@@ -1,5 +1,4 @@
 import numpy
-from sklearn.utils.estimator_checks import check_get_feature_names_out_error
 
 from Modules.GenericPuzzle import MapPuzzle
 from Modules import ReadFiles
