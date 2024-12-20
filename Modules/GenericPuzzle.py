@@ -52,12 +52,12 @@ class MapPuzzle(Puzzle):
 
     ''' Return the location of val if and only if there is one unique position on the map'''
     def find_start(self, input_map, val):
-        pos = numpy.where(input_map == val)
-        if len(pos[0])> 1 or len(pos[1]) > 1:
+        pos = numpy.argwhere(input_map == val)
+        if len(pos)> 1:
             print("Multiple starting positions detected this should never happen!")
-        elif len(pos[0]) == 0:
+        elif len(pos) == 0:
             return None
-        return [pos[0][0], pos[1][0]]
+        return pos[0]
 
     ''' return true if the position is a valid for the given map'''
     def position_in_bounds(self, input_map, position):

@@ -1,11 +1,9 @@
-from lib2to3.fixer_util import find_root
-
 import numpy
 
-from Modules.GenericPuzzle import Puzzle
+from Modules.GenericPuzzle import MapPuzzle
 from Modules import ReadFiles
 
-class PuzzleDay15(Puzzle):
+class PuzzleDay15(MapPuzzle):
     def __init__(self, filename):
         super().__init__(filename)
         self.map = None
@@ -18,23 +16,16 @@ class PuzzleDay15(Puzzle):
         self.map = numpy.array([list(line) for line in file_output[0:index]])
         self.input = "".join(file_output[index+1::])
 
-    def find_robot(self):
-        pos = numpy.where(self.map == "@")
-        if len(pos[0])> 1 or len(pos[1]) > 1:
-            print("Multiple robots detected this should never happen!")
-
-        self.robot = numpy.array([pos[0][0], pos[1][0]])
-
     # update the map based on the robot and the step
     def take_step(self, step):
         # figure out how many boxes we will push
-        new_pos = self.robot+step
+        new_pos = self.robot + step
 
         # cannot take a step so return
         if self.map[new_pos[0], new_pos[1]] == '#':
             return
         # can take a step but there is a box in the way
-        elif self.map[new_pos[0], new_pos[1]] == 'O':
+        elif self.map[new_pos[0], new_pos[1]] in ('O','[',']'):
             # we have a box at the next position
             # find the next element in the chain that is not a box
             if step[0] == 0:
@@ -59,26 +50,71 @@ class PuzzleDay15(Puzzle):
 
         # move our robot and update the map
         self.map[self.robot[0],self.robot[1]] = '.'
-        self.robot = self.robot+step
+        self.robot = self.robot + step
         self.map[self.robot[0],self .robot[1]] = '@'
 
-    def part1(self):
-        self.find_robot()
-
+    def run_steps(self):
         for elem in self.input:
-            if elem == "^":  # facing up
-                self.take_step([-1, 0])
-            if elem == "v":  # facing down
-                self.take_step([1, 0])
-            elif elem == ">":  # facing left
-                self.take_step([0, 1])
-            if elem == "<":  # facing right
-                self.take_step([0, -1])
-        box_pos = numpy.where(self.map=='O')
-        count = 0
-        for row, col in zip(box_pos[0], box_pos[1]):
-            count+= row * 100 + col
+            match elem:
+                case "^":
+                    self.take_step(self.UP)
+                case "v":
+                    self.take_step(self.DOWN)
+                case ">":
+                    self.take_step(self.RIGHT)
+                case "<":
+                    self.take_step(self.LEFT)
+                case _:
+                    print("Error unrecognised command!")
 
+    def part1(self):
+        # initialise the robot
+        self.robot = self.find_start(self.map,'@')
+
+        # run through the steps
+        self.run_steps()
+
+        # compute the count
+        box_pos = numpy.argwhere(self.map=='O')
+        count = sum([box[0] * 100 + box[1] for box in box_pos])
         return count
+
+    def create_big_map(self):
+        # repeat
+        big_map = numpy.repeat(self.map,2, axis=1)
+
+        # fix the special cases
+        possible_robots = numpy.argwhere(big_map == '@')
+        # replace the right most robot
+        if sum(possible_robots[0] - possible_robots[1]) < 0:
+            big_map[possible_robots[1,0],possible_robots[1,1]] ='.'
+            self.robot = possible_robots[0]
+        else:
+            big_map[possible_robots[0,0],possible_robots[0,1]] ='.'
+            self.robot = possible_robots[1]
+
+        # boxes are more complicated
+        boxes = numpy.argwhere(big_map == 'O')
+        for elem in boxes:
+            # if directly to the left we have anything that is not an old box or the left side of a box
+            # place the right side of a box
+            if big_map[elem[0], elem[1]-1] in ('.','#','@',']'):
+                big_map[elem[0],elem[1]]='['
+            # if directly to the right we have anything that is not an older box or the right side of a box
+            # place the left side of a box
+            elif big_map[elem[0], elem[1]+1] in ('.','#','@','['):
+                big_map[elem[0],elem[1]]=']'
+            elif big_map[elem[0], elem[1]-1] == '[':
+                big_map[elem[0],elem[1]]=']'
+            elif big_map[elem[0], elem[1]-1] == ']':
+                big_map[elem[0],elem[1]]='['
+
+        # just double check here we have no more old boxes
+        if numpy.any(numpy.ndarray.flatten(big_map)=='O'):
+            print("Old boxes still exist, fix your code!")
+
+        return big_map
+
     def part2(self):
-        pass
+        #first we must expand the map
+        big_map = self.create_big_map()
