@@ -62,3 +62,10 @@ class MapPuzzle(Puzzle):
     ''' return true if the position is a valid for the given map'''
     def position_in_bounds(self, input_map, position):
         numpy.all(position < input_map.shape) and numpy.all(position > -1)
+
+    ''' custom sign function return 1 if 0 or positive otherwise return -1'''
+    def sign(self, number):
+        if number < 0:
+            return -1
+        else:
+            return 1
