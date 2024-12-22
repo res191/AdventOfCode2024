@@ -1,6 +1,13 @@
 import time
 import numpy
 
+''' custom sign function return 1 if 0 or positive otherwise return -1'''
+def sign(number):
+    if number < 0:
+        return -1
+    else:
+        return 1
+
 ''' The most generic puzzle class. It requires derived classes to implmenent 
 -read_file to set self.input appropriately
 -part1 to solve part1 of the puzzle and return the correct value
@@ -63,9 +70,3 @@ class MapPuzzle(Puzzle):
     def position_in_bounds(self, input_map, position):
         numpy.all(position < input_map.shape) and numpy.all(position > -1)
 
-    ''' custom sign function return 1 if 0 or positive otherwise return -1'''
-    def sign(self, number):
-        if number < 0:
-            return -1
-        else:
-            return 1
