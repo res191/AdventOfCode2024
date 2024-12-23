@@ -35,35 +35,46 @@ class PuzzleDay20(MapPuzzle):
                     return timed_map
 
     def part1(self):
+        count = 0
         # find where the path starts
-        start = self.find_start(self.input,'S')
+        start = self.find_start(self.input, 'S')
         timed_map = self.fill_map(start)
 
-        # find all the possible places one could cheat
-        blocks = numpy.argwhere(self.input == '#')
+        path = numpy.argwhere(self.input != '#')
+        for step in path:
+            count += self.find_shortcuts(timed_map, 2, step)
+        return count
 
-        # remove any blocks that are on the edges
-        blocks = blocks[ numpy.all(blocks > 0, axis = 1) ]
-        blocks = blocks[ numpy.all(blocks < numpy.array(self.input.shape)  -1, axis = 1) ]
-
-        # for each potential cheat block
+    def find_shortcuts(self, timed_map, cheat_length, start_pos):
+        # for the row
         count = 0
-        for cheat in blocks:
-            # because some walls might have no valid shortcut reinitialise the value to 0 every time
-            shortcut = 0
+        start_int = int(timed_map[start_pos[0], start_pos[1]])
 
-            # if a new path would be created in the UP-DOWN direction
-            if self.input[cheat[0]+1, cheat[1]] != '#' and self.input[cheat[0]-1, cheat[1]] != '#':
-                shortcut = abs(int(timed_map[cheat[0]+1, cheat[1]]) - int(timed_map[cheat[0]-1, cheat[1]]))
-            # if a new path would be created in the LEFT-RIGHT direction
-            elif self.input[cheat[0], cheat[1]+1] != '#' and  self.input[cheat[0], cheat[1]-1] != '#':
-                shortcut = abs(int(timed_map[cheat[0], cheat[1]+1]) - int(timed_map[cheat[0], cheat[1] - 1]))
+        for i in range (start_pos[0] - cheat_length, start_pos[0] + cheat_length + 1):
+            # for the column
+            for j in range(start_pos[1] - cheat_length, start_pos[1] + cheat_length + 1):
+                row_step = abs(start_pos[0] - i)
+                col_step = abs(start_pos[1] - j)
 
-            # note here we are subtracting 2 from the shortcut because the cheat takes 2 picoseconds
-            if  shortcut - 2 > self.min_shortcut:
-                count += 1
+                # this is not a valid  just continue
+                if (row_step + col_step > cheat_length or not self.position_in_bounds(self.input,numpy.array([i, j]))
+                        or self.input[i, j]=='#'):
+                    continue
+
+                # shortcut is the start and end position minus the number of steps
+                shortcut = int(timed_map[i,j]) - start_int - row_step - col_step
+                if shortcut > self.min_shortcut:
+                    count += 1
 
         return count
 
     def part2(self):
-        pass
+        count = 0
+        # find where the path starts
+        start = self.find_start(self.input, 'S')
+        timed_map = self.fill_map(start)
+
+        path = numpy.argwhere(self.input != '#')
+        for step in path:
+            count += self.find_shortcuts(timed_map, 20, step)
+        return count
