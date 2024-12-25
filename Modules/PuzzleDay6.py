@@ -4,7 +4,6 @@ from operator import add
 from Modules.GenericPuzzle import MapPuzzle
 from Modules.GenericPuzzle import sign
 from Modules.ReadFiles import read_file_as_char_map
-from Modules.TrackGuard import turn_guard_clockwise
 
 ''' scan the given slice and return the closest position for the given character '''
 def scan_line(input_line, char):
@@ -164,7 +163,7 @@ class PuzzleDay6(MapPuzzle):
         count = 0
 
         # while the guard is not on the map boundary
-        while not numpy.any(self.guard.location == 0) and not numpy.any(self.guard.location + 1 < self.input.shape):
+        while numpy.all(self.guard.location > 0) and numpy.all(numpy.add(self.guard.location, 1) < self.input.shape):
             next_loc = self.guard.location + self.guard.direction
 
             # if our next position is not already an obstacle or a place we have previously traversed
